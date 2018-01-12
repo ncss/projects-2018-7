@@ -9,5 +9,8 @@ if [ -d $DIR ]; then
 
 	screen /dev/ttyACM0
 else
-	echo 'not mounted'
+	echo 'assuming microbit'
+
+    python uflash.py ${1}
+    screen /dev/ttyACM0
 fi
