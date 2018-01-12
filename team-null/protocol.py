@@ -3,4 +3,5 @@
 CHANNEL=33
 PROTOCOL='joust:'
 DEAD='dead'
-ACCEL='accel'
+SPEED='speedup'
+SLOW='slowdown'
