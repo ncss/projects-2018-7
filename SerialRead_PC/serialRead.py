@@ -4,7 +4,7 @@ import time
 import os
 from time import sleep
 
-#How to find USB Serial Port? - Go to "Device Manager" and see under 
+#How to find USB Serial Port? - Go to "Device Manager" and see under Ports (COM & LPT)
 ser = serial.Serial('COM5', 115200, timeout=0)
 #ser.open()
 while True:
