@@ -18,8 +18,7 @@ radio.on()
 radio.config(channel=CHANNEL) # sets channel to 34
 
 
-was_over_threshold = abs(accelerometer.get_z()) >= \
-    PUSH_UP_ACCELERATION_THRESHOLD
+was_over_threshold = False
 motor_index = 0
 
 
