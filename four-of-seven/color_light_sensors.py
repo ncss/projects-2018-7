@@ -12,8 +12,8 @@ Range = {'Red':[600, 630],
 while True:
     light_1 = pin1.read_analog()
     light_2 = pin2.read_analog()
-    print('light_1:' + str(light_1))
-    print('light_2:' + str(light_2)) 
+    print('red:' + str(light_1))
+    print('green:' + str(light_2)) 
     sleep(500)
     
     for color, colRange in Range.items(): 
@@ -23,9 +23,9 @@ while True:
             
 
 def is_passed(currentColor):
-    currentInd = 
+    currentInd = currentcolor
     
-    """
+    '''
     if light_1 > Red[0] and light_1 < Red[1] and light_2 > Red[0] and light_2 < Red[1]: 
         status ['Red'] = True 
         
@@ -36,8 +36,6 @@ def is_passed(currentColor):
         status ['Green'] = True 
         
     
-    
-    '''
     #if light > 500
         counter =+ 1 
     #else 
