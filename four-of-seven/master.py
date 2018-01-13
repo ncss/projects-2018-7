@@ -5,7 +5,6 @@ radio.on()
 radio.config(channel=34)
 
 startTime = 0
-finishingTimes = []
 
 # M is for master.
 display.show('M')
@@ -17,7 +16,6 @@ while True:
         startTime = running_time()
         display.scroll('ON', wait=False, loop=True)
     if message == "Stop":
-        finishTime = running_time() - startTime
-        finishingTimes.append(finishTime)
+        finish_time = running_time() - startTime
         display.scroll('OFF', wait=False, loop=True)
-        print(finishingTimes)
+        print(finish_time)
