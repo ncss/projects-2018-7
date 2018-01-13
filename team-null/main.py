@@ -3,7 +3,14 @@ from quokka import *
 
 # when flashing change this value to the associated device code
 # very important
-ID = ['mario', 'luigi', 'yoshi', 'bowser'][0]
+ID = ['mario', 'yoshi', 'peach', 'bowser'][1]
+
+ID_COLORS = {
+    'mario' : (255, 0, 0),
+    'yoshi' : (0, 255, 0),
+    'peach' : (255, 0, 165),
+    'bowser' : (255, 200, 0)
+}
 
 # gross
 class _p:
@@ -46,66 +53,35 @@ radio.enable()
 radio.config(channel=P.CHANNEL)
 
 _Dt = 10
-_V = [0, 0, 0]
 
-# integrate accleration
-# V = Vo + at
 def get_instant_vel():
     global _Dt
-    global _V
 
     # get average V over delta time
     start_time = running_time()
     accel_store = []
 
     while running_time() < start_time + _Dt or len(accel_store) < 1:
-        accel_store.append((accelerometer.x, accelerometer.y, accelerometer.z))
+        try:
+            accel_store.append((accelerometer.x, accelerometer.y, accelerometer.z))
+        except Exception as e:
+            print('accelerometer broke: {}'.format(e))
 
     accel_over_dt = [0, 0, 0]
-    accel_over_dt[0] = sum([accel_store[i][0] for i in range(len(accel_store))]) / len(accel_store)
-    accel_over_dt[1] = sum([accel_store[i][1] for i in range(len(accel_store))]) / len(accel_store)
-    accel_over_dt[2] = sum([accel_store[i][2] for i in range(len(accel_store))]) / len(accel_store)
+    accel_over_dt[0] = (sum([accel_store[i][0] for i in range(len(accel_store))]) / len(accel_store)) * _Dt
+    accel_over_dt[1] = (sum([accel_store[i][1] for i in range(len(accel_store))]) / len(accel_store)) * _Dt
+    accel_over_dt[2] = (sum([accel_store[i][2] for i in range(len(accel_store))]) / len(accel_store)) * _Dt
 
-    #_vinitial = _V
+    return (((accel_over_dt[0] ** 2) + (accel_over_dt[1] ** 2) + (accel_over_dt[2] ** 2)) ** (1/2)) - (9.8)
 
-    deriv = [(accel_over_dt[i] * _Dt) - _V[i] for i in range(3)]
-
-    _V[0] = accel_over_dt[0] * _Dt
-    _V[1] = accel_over_dt[1] * _Dt
-    _V[2] = accel_over_dt[2] * _Dt
-    
-    #try:
-    #    new = (accelerometer.x, accelerometer.y, accelerometer.z)
-    #except Exception as e:
-    #    new = _accellast
-    #    print('accelerometer broke: {}'.format(e))
+def set_lights(col):
+    for i in range(8):
+        neopixels.set_pixel(i, col[0], col[1], col[2])
         
-    ret = ((deriv[0] * deriv[0]) + (deriv[1] * deriv[1]) + (deriv[2] * deriv[2])) ** (1/2)
-
-    print(_V, ret, ret - 9.8)
-
-    #_vinitial = _V
-
-    return ret
+    neopixels.show()
 
 # test this
 _cthresh = P.THRESH_UPPER
-
-while True:
-    v = get_instant_vel()
-
-    if v > 1.5:
-        for i in range(8):
-            neopixels.set_pixel(i, 64, 0, 0)
-    else:
-        for i in range(8):
-            neopixels.set_pixel(i, 0, 64, 0)
-
-    neopixels.show()
-    
-    sleep(100)
-
-exit(1)
 
 while True:
 
@@ -114,6 +90,8 @@ while True:
 
     # wait for (new) game to start
     while True:
+        set_lights((0, 0, 0) if ((running_time() // 1000) % 2) else ID_COLORS[ID])
+        
         msg = P.get_msg()
 
         P.send_msg([P.ID, str(ID)])
@@ -127,6 +105,8 @@ while True:
 
     # play game
     while True:
+        set_lights(ID_COLORS[ID])
+        
         vel = get_acceldelta()
 
         if (vel > _cthresh):
@@ -147,6 +127,8 @@ while True:
                 print('slowing down...')
 
     print('waiting for game to end')
+
+    set_lights((0, 0, 0))
 
     # wait for end game
     while True:
