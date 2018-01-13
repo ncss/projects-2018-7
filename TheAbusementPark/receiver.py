@@ -34,4 +34,4 @@ while True:
             display.show(Image.SAD, delay=DELAY_CYCLE, loop=False, clear=True)
             music.play(music.GREENSLEEVES, wait=False)
             display.scroll("Game Over!!!", loop=True)
-   sleep(50)
+    sleep(50)
