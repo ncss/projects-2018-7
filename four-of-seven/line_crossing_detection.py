@@ -17,4 +17,6 @@ while True:
     pin12.write_digital(0)
     pin8.write_digital(0)    
     sleep(15)
+
+    
     
