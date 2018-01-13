@@ -1,6 +1,6 @@
 """
-This program is made for the pushuppers controlling the robot
-It transmits accelerometer data on channel 34
+This program is made for the pushuppers controlling the robot. It transmits
+accelerometer data on channel 34.
 """
 
 
@@ -9,9 +9,9 @@ import radio
 
 
 CHANNEL = 34
-PUSH_UP_ACCELERATION_THRESHOLD = 1200
+# Detects upward part of pushup.
+PUSH_UP_ACCELERATION_THRESHOLD = -1100
 MOTORS = ['L', 'R']
-ROBOTS = ['A']
 
 
 radio.on()
@@ -21,25 +21,25 @@ radio.config(channel=CHANNEL) # sets channel to 34
 was_over_threshold = abs(accelerometer.get_z()) >= \
     PUSH_UP_ACCELERATION_THRESHOLD
 motor_index = 0
-robot_index = 0
-get_robot_id = lambda: ROBOTS[robot_index % len(ROBOTS)]
-get_motor_id = lambda: MOTORS[motor_index % len(MOTORS)]
 
 
 while True:
-    if button_a.was_pressed():
-        robot_index += 1
     if button_b.was_pressed():
-        motor_index += 1
-    
-    display.show([get_robot_id(), get_motor_id()])
+        motor_index = not motor_index
+
+    display.show(MOTORS[motor_index])
 
     z_axis_acceleration = accelerometer.get_z()
-    print(z_axis_acceleration)
-    if abs(z_axis_acceleration) >= PUSH_UP_ACCELERATION_THRESHOLD and not \
+    # Smaller than because upwards acceleration is negative.
+    if z_axis_acceleration <= PUSH_UP_ACCELERATION_THRESHOLD and not \
             was_over_threshold:
         was_over_threshold = True
-        radio.send(get_motor_id())
-        print('Transmitted {}.'.format(get_motor_id()))
-    elif abs(z_axis_acceleration) < PUSH_UP_ACCELERATION_THRESHOLD:
+        radio.send(MOTORS[motor_index])
+        print(
+            'Transmitted {}, after acceleration of {}.'.format(
+                MOTORS[motor_index],
+                z_axis_acceleration
+            )
+        )
+    elif z_axis_acceleration > PUSH_UP_ACCELERATION_THRESHOLD:
         was_over_threshold = False
