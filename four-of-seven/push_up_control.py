@@ -6,6 +6,7 @@ accelerometer data on channel 34.
 
 from microbit import *
 import radio
+import music
 
 
 CHANNEL = 34
@@ -33,6 +34,7 @@ while True:
     if z_axis_acceleration <= PUSH_UP_ACCELERATION_THRESHOLD and not \
             was_over_threshold:
         was_over_threshold = True
+        music.play(music.BA_DING)
         radio.send(MOTORS[motor_index])
         print(
             'Transmitted {}, after acceleration of {}.'.format(

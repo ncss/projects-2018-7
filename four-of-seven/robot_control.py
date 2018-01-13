@@ -11,12 +11,7 @@ MOTOR_RUN_TIME = 300
 pushupCounter = 0
 lEndTime = 0
 rEndTime = 0
-
-def driveFwd():
-    pin0.write_digital(0)
-    pin16.write_digital(1)
-    pin12.write_digital(1)
-    pin8.write_digital(0)
+startFlag = False
 
 def driveLeftMotor():
     pin0.write_digital(0)
@@ -24,12 +19,6 @@ def driveLeftMotor():
 
 def driveRightMotor():
     pin12.write_digital(1)
-
-def driveBwd():
-    pin0.write_digital(1)
-    pin16.write_digital(0)
-    pin12.write_digital(0)
-    pin8.write_digital(1)
     
 def stop():
     pin0.write_digital(0)
@@ -43,26 +32,20 @@ def stopLeft():
     
 def stopRight():
     pin12.write_digital(0)
-
-"""def driveLeft():
-    pin0.write_analog(0)
-    pin16.write_analog(512)
-    pin12.write_analog(1023)
-    pin8.write_analog(0)
-
-def driveRight():
-    pin0.write_analog(0)
-    pin16.write_analog(1023)
-    pin12.write_analog(512)
-    pin8.write_analog(0)"""
     
 while True:
     message = radio.receive()
     if running_time() > lEndTime:
         stopLeft()
     if running_time() > rEndTime:
-        stopRight()    
-    if message: # if a message is received (if threshold is met)
+        stopRight() 
+    
+    # signal sent to robot from master to start
+    if message == "Start":
+        startFlag = True
+    
+    # message received and instructed to start
+    if message and startFlag == True: # if a message is received (if threshold is met)
     
         pushupCounter += 1
         print(pushupCounter)
@@ -79,3 +62,6 @@ while True:
             print("getting R")
             rEndTime = running_time() + MOTOR_RUN_TIME
             driveRightMotor()
+        
+        #if crossed white line:
+        #    startFlag = False
