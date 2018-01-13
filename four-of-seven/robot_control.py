@@ -7,8 +7,10 @@ radio.on()
 radio.config(channel=34) # sets channel to 34
 
 THRESHOLD = 0
-motorRunTime = 100
+MOTOR_RUN_TIME = 300
 pushupCounter = 0
+lEndTime = 0
+rEndTime = 0
 
 def driveFwd():
     pin0.write_digital(0)
@@ -56,6 +58,10 @@ def driveRight():
     
 while True:
     message = radio.receive()
+    if running_time() > lEndTime:
+        stopLeft()
+    if running_time() > rEndTime:
+        stopRight()    
     if message: # if a message is received (if threshold is met)
     
         pushupCounter += 1
@@ -64,19 +70,12 @@ while True:
         # drive left motor
         if message == "L":
             print("getting L")
-            lEndTime = running_time() + motorRunTime
-            if running_time() > lEndTime: # print out the lendtime and running time shit cos it aint workin
-                print("stopleft")
-                stopLeft()
-            else:
-                driveLeftMotor()
-                print("driveleft")
+            lEndTime = running_time() + MOTOR_RUN_TIME
+            driveLeftMotor()
                 
                 
         # drive right motor
         elif message == "R":
-            rEndTime = running_time() + motorRunTime
-            if running_time() > rEndTime:
-                stopRight()
-            else:
-                driveRightMotor()
+            print("getting R")
+            rEndTime = running_time() + MOTOR_RUN_TIME
+            driveRightMotor()
