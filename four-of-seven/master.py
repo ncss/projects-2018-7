@@ -15,7 +15,9 @@ while True:
     if button_a.was_pressed():
         radio.send("Start")
         startTime = running_time()
+        display.scroll('ON', wait=False, loop=True)
     if message == "Stop":
         finishTime = running_time() - startTime
         finishingTimes.append(finishTime)
+        display.scroll('OFF', wait=False, loop=True)
         print(finishingTimes)
