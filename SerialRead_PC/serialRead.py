@@ -9,6 +9,7 @@ ser = serial.Serial('COM5', 115200, timeout=0)
 #ser.open()
 while True:
 	data = ser.readline().strip()
+	data = data.decode('utf-8')
 	if len(data) > 0:
 		print (data)
 		#when data "a" stays in received data open webbrowser with the given link 
