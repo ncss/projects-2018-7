@@ -1,16 +1,21 @@
 # client
 from quokka import *
+import math
 
 # when flashing change this value to the associated device code
 # very important
-ID = ['mario', 'yoshi', 'peach', 'bowser'][1]
+ID = ['mario', 'yoshi', 'peach', 'bowser'][2]
 
 ID_COLORS = {
     'mario' : (255, 0, 0),
     'yoshi' : (0, 255, 0),
-    'peach' : (255, 0, 165),
+    'peach' : (255, 10, 50),
     'bowser' : (255, 200, 0)
 }
+
+ANIM_TIME = 2000
+
+PI_3 = (math.pi * 2.0 ) / 3.0
 
 # gross
 class _p:
@@ -23,8 +28,8 @@ class _p:
     SPEED_UP='sup'
     SLOW_DOWN='sdn'
 
-    THRESH_LOWER=2.0
-    THRESH_UPPER=4.0
+    THRESH_LOWER=8.0
+    THRESH_UPPER=10.0
 
     MSG_RATE=int(1000/10)
 
@@ -32,17 +37,20 @@ class _p:
         pass
 
     def get_msg(self):
-        msg = radio.receive()
+        try:
+            msg = radio.receive()
 
-        if msg:
-            msg = msg.split(':')
+            if msg:
+                msg = msg.split(':')
 
-            if not msg[0] == self.PROTOCOL:
-                return None
+                if not msg[0] == self.PROTOCOL:
+                    return None
 
-            return msg[1:]
+                return msg[1:]
 
-        return None
+            return None
+        except:
+            return None
 
     def send_msg(self, msg_list):
         radio.send(':'.join([self.PROTOCOL] + msg_list))
@@ -54,7 +62,7 @@ radio.config(channel=P.CHANNEL)
 
 _Dt = 10
 
-def get_instant_vel():
+def get_accel():
     global _Dt
 
     # get average V over delta time
@@ -84,6 +92,8 @@ def set_lights(col):
 _cthresh = P.THRESH_UPPER
 
 while True:
+    
+    am_dead = False
 
     print('waiting for new game to start')
     print('my id is: {}'.format(ID))
@@ -107,9 +117,10 @@ while True:
     while True:
         set_lights(ID_COLORS[ID])
         
-        vel = get_acceldelta()
-
-        if (vel > _cthresh):
+        vel = get_accel()
+        
+        if (abs(vel) > _cthresh):
+            am_dead = True
             break
 
         msg = P.get_msg()
@@ -134,6 +145,20 @@ while True:
     while True:
         msg = P.get_msg()
         if msg and msg[0] == P.END_GAME:
+            if am_dead:
+                set_lights((0, 0, 0)) # loser
+                sleep(ANIM_TIME)
+            else:
+                st = running_time()
+                
+                # winner
+                while running_time() < st + ANIM_TIME:
+                    Q = running_time() / 10
+
+                    for i in range(8):
+                        neopixels.set_pixel_rainbow(i, int((3*i+Q)%119))
+                    neopixels.show()
+                    
             break
 
         P.send_msg([P.DEAD, ID])

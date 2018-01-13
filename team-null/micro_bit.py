@@ -35,7 +35,12 @@ class _p:
         return None
 
     def send_msg(self, msg_list):
-        radio.send(':'.join([self.PROTOCOL] + msg_list))
+        msg_set = ':'.join([self.PROTOCOL] + msg_list)
+        radio.send(msg_set)
+        
+    def send_serial(self, msg_list):
+        msg_set = ':'.join([self.PROTOCOL] + msg_list)
+        print(msg_set)
 
 P = _p()
 
@@ -45,10 +50,10 @@ radio.config(channel=P.CHANNEL)
 registered_ids = []
 
 while True:
-    print('waiting for users to join')    
+    print('waiting for users to join')
     
     # temp should wait for timer
-    while len(registered_ids) < 3:
+    while len(registered_ids) < 4:
         if button_a.was_pressed():
             print('playing with only {} people'.format(len(registered_ids)))
             break
@@ -58,10 +63,13 @@ while True:
         if msg and msg[0] == P.ID:
             if msg[1] not in registered_ids:
                 registered_ids.append(msg[1])
-
+                P.send_serial([P.ID, msg[1]])
+                
                 print('registered player {}'.format(msg[1]))
+                
 
     print('starting game')
+    P.send_serial([P.START_GAME])
 
     # TODO: implement quokka received check
     for i in range(5):
@@ -86,6 +94,7 @@ while True:
         if msg:
             if msg[0] == P.DEAD and msg[1] in registered_ids:
                 registered_ids.remove(msg[1])
+                P.send_serial([P.DEAD, msg[1]])
 
                 print('player {} has died, {} remain'.format(msg[1], len(registered_ids)))
 
@@ -94,6 +103,8 @@ while True:
     else:
         print('something went very wrong')
 
+    P.send_serial([P.END_GAME])
+    
     # TODO: implement quokka received check
     for i in range(5):
         P.send_msg([P.END_GAME])
