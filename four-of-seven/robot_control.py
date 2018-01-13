@@ -32,6 +32,19 @@ def stopLeft():
     
 def stopRight():
     pin12.write_digital(0)
+
+def across_line():
+    
+    light_1 = pin1.read_analog()
+    light_2 = pin2.read_analog()
+    
+    print ("light_1:" + str(light_1))
+    print ("light_2:" + str(light_2))
+    
+    if light_1 < 10 and light_2 <10:
+        return True
+    
+    return False
     
 while True:
     message = radio.receive()
@@ -63,5 +76,6 @@ while True:
             rEndTime = running_time() + MOTOR_RUN_TIME
             driveRightMotor()
         
-        #if crossed white line:
-        #    startFlag = False
+        if across_line():
+            startFlag = False
+            radio.send("Stop")
