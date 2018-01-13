@@ -29,6 +29,11 @@ while True:
         elif msg == PROTOCOL + "down":
             display.clear()
             display.show(Image.ARROW_S, delay=DELAY_CYCLE, wait=False, clear=True)
+        elif msg == PROTOCOL + "flag_arrival":
+            display.clear()
+            display.show(Image.TARGET, delay=DELAY_CYCLE, wait=False, clear=True)
+            music.play(music.NYAN, wait=False)
+            # player has to return to starting point 
         elif msg == PROTOCOL + "game_over":
             display.clear()
             display.show(Image.SAD, delay=DELAY_CYCLE, loop=False, clear=True)
