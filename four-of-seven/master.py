@@ -7,6 +7,8 @@ radio.config(channel=34)
 startTime = 0
 finishingTimes = []
 
+# M is for master.
+display.show('M')
 
 while True:
     message = radio.receive()

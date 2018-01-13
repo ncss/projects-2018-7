@@ -11,7 +11,7 @@ import music
 
 CHANNEL = 34
 # Detects upward part of pushup.
-PUSH_UP_ACCELERATION_THRESHOLD = -1100
+PUSH_UP_ACCELERATION_THRESHOLD = -1200
 MOTORS = ['L', 'R']
 
 
@@ -34,7 +34,7 @@ while True:
     if z_axis_acceleration <= PUSH_UP_ACCELERATION_THRESHOLD and not \
             was_over_threshold:
         was_over_threshold = True
-        music.play(music.BA_DING)
+        music.play(music.BA_DING, wait=False)
         radio.send(MOTORS[motor_index])
         print(
             'Transmitted {}, after acceleration of {}.'.format(
