@@ -22,11 +22,14 @@ try:
             system('cls')
             times[name] = int(data)
             with open(LEADERBOARD_FILE, 'a') as leaderboard_file:
-                for name in sorted(times.keys(), key=lambda names: times[names]):
-                    print(name, times[name])
+                for current_name in sorted(
+                        times.keys(),
+                        key=lambda names: times[names]
+                ):
+                    print(current_name, times[current_name])
                 leaderboard_file.write(name + ', ' + data + '\n')
             print()
-        sleep(0.5)
+        sleep(2)
 
 except KeyboardInterrupt:
     serial_bus.close()

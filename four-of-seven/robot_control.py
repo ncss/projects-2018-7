@@ -22,7 +22,7 @@ CALIBRATION_ADDITION = 10
 
 
 # If any sensor is seeing brighted (lower) than this, it can be considered on.
-threshold = 600
+threshold = 610
 
 
 detected_colour = lambda pin: pin.read_analog() < threshold
@@ -79,7 +79,7 @@ while True:
     if button_a.was_pressed():
         position_in_order = 0
     if button_b.was_pressed():
-        calibrate()
+        position_in_order += 1
 
     message = radio.receive()
     if running_time() > lEndTime:
